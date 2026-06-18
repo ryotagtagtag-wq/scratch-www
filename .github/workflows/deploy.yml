@@ -1,0 +1,47 @@
+name: Build and Deploy Scratch-WWW to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master # または main, develop など、あなたの主軸ブランク名に合わせてください
+
+# GitHub Pagesへのデプロイに必要な権限を設定
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. リポジトリのソースコードを取得
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # 2. Node.js 環境のセットアップ
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. 依存パッケージのインストール
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4. JSON管理の「多言語化テキスト」の構築
+      # これにより、英語でもデザインが崩れない完璧な翻訳環境がコンパイルされます
+      - name: Build Translatable Text Strings (Intl)
+        run: npm run translate
+
+      # 5. ソースコードをブラウザが読める静的ファイル（HTML/JS/CSS）へビルド
+      - name: Compile and Build Production Bundles
+        run: npm run build
+
+      # 6. ビルドされた成果物を、GitHub Pages（gh-pagesブランチ）へ自動デプロイ！
+      # 外部のAPIキー（シークレット設定）は一切不要、完全無料で動きます
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build # Scratchのビルド成果物が格納されるディレクトリ（通常はbuild）
+          branch: gh-pages # デプロイ先のブランチ（自動で作成されます）
