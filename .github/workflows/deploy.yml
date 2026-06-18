@@ -3,7 +3,7 @@ name: Build and Deploy Scratch-WWW to GitHub Pages
 on:
   push:
     branches:
-      - master # または main, develop など、あなたの主軸ブランク名に合わせてください
+      - develop # または main, develop など、あなたの主軸ブランチ名に合わせてください
 
 # GitHub Pagesへのデプロイに必要な権限を設定
 permissions:
